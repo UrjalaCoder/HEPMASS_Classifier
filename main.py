@@ -50,25 +50,31 @@ def evaluate_net(net, dataset):
 
         if int(round(correct_value)) == pred_value:
             correctly_evaluated += 1
-    print(f"CORRECT {correctly_evaluated} / {len(dataset)} = {(float(correctly_evaluated) / float(len(dataset))) * 100}%")
-
+    p = float(correctly_evaluated) / float(len(dataset))
+    print(f"CORRECT {correctly_evaluated} / {len(dataset)} = {p * 100}%")
+    return p
 
 def main():
-    raw_data = load_from_file(filename="1000_train.csv")
+    raw_data = load_from_file(filename="1000_train.csv", skip=100)
     # print(raw_data)
-    test_data = load_from_file(filename="1000_test.csv")
+    test_data = load_from_file(filename="1000_test.csv", skip=50)
     # print(test_data)
     test_dataset = generate_dataset(test_data)
     dataset = generate_dataset(raw_data)
-
+    print("LOADED DATA")
     in_size = dataset[0][0].shape[0]
     out_size = 2
     net = Network(in_size, out_size, hidden_size=6)
-
-    train(net, dataset, epochs=5, lr=0.2)
+    print("Training: ")
+    train(net, dataset, epochs=12, lr=0.2)
 
     print("Training done, evaluating...")
-    evaluate_net(net, test_dataset)
+    p = evaluate_net(net, test_dataset)
+    if p > 0.8:
+        filename_p = int(round(p * 100))
+        file_pt = f"nets/{filename_p}-network-{len(dataset)}-rows.pt"
+        print(f"Saving to {file_pt}")
+        torch.save(net, file_pt)
 
 if __name__ == '__main__':
     main()

@@ -1,9 +1,11 @@
 import pandas as pd
 import torch
+import random
 
-def load_from_file(filename):
-    d = pd.read_csv("data/" + filename, nrows=10000, index_col=False)
+def load_from_file(filename, skip=1000):
+    d = pd.read_csv("data/" + filename, header=0, index_col=False, skiprows=lambda i: i > 0 and i % skip != 0)
     d.index = range(len(d))
+    print(len(d))
     return d
 
 def generate_dataset(raw_data, cols=26):
