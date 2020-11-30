@@ -14,12 +14,8 @@ def train(net, dataset, epochs=1, lr=1):
             input, correct_out = sample
             input_tensor = input.to(dtype=torch.float32)
             prediction = net(input_tensor)
-            # print(prediction)
             correct_out_tensor = torch.tensor([1.0 - correct_out, correct_out])
             correct_out_tensor = correct_out_tensor.to(dtype=torch.float32)
-            # print(correct_out_tensor)
-            # test_input = dataset[0][0].to(dtype=torch.float32)
-            # test_output = dataset[0][1].unsqueeze(dim=0).to(dtype=torch.float32)
 
             loss = net.loss(prediction, correct_out_tensor)
             loss.backward()
@@ -39,14 +35,10 @@ def evaluate_net(net, dataset):
     correctly_evaluated = 0
     for sample in dataset:
         input, correct_out = sample
-        # print(sample)
         input_tensor = input.to(dtype=torch.float32)
         prediction = net(input_tensor)
         correct_value = correct_out.item()
         pred_value = 0 if prediction[0] > prediction[1] else 1
-        # print("CORRECT ", correct_value)
-        # print(prediction)
-        # print(pred_value)
 
         if int(round(correct_value)) == pred_value:
             correctly_evaluated += 1
@@ -56,9 +48,7 @@ def evaluate_net(net, dataset):
 
 def main():
     raw_data = load_from_file(filename="1000_train.csv", skip=100)
-    # print(raw_data)
     test_data = load_from_file(filename="1000_test.csv", skip=50)
-    # print(test_data)
     test_dataset = generate_dataset(test_data)
     dataset = generate_dataset(raw_data)
     print("LOADED DATA")
